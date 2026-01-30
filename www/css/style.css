@@ -1,0 +1,94 @@
+body {
+margin: 0; 
+font-family: Arial, sans-serif;
+}
+#sidebar {
+width: 250px;
+height: 100vh;
+position: fixed;
+top: 0; left: 0;
+background-color: #212529;
+padding: 1rem;
+color: white;
+transition: width 0.3s ease, padding 0.3s ease;
+overflow-x: hidden;
+z-index: 1040;
+}
+#sidebar.collapsed {
+width: 0;
+padding: 0;
+}
+#sidebar h4 {
+margin-bottom: 1.5rem;
+}
+#sidebar ul {
+padding-left: 0;
+list-style: none;
+}
+#sidebar ul li {
+margin-bottom: 1rem;
+}
+#sidebar ul li a {
+color: white;
+text-decoration: none;
+display: block;
+padding: 0.3rem 0.5rem;
+border-radius: 0.25rem;
+}
+#sidebar ul li a:hover {
+background-color: #0d6efd;
+}
+
+#content {
+  margin-left: 250px;  /* espacio para sidebar */
+  padding: 2rem;
+  transition: margin-left 0.3s ease;
+  min-height: 100vh;
+  box-sizing: border-box; /* evita problemas de padding */
+}
+
+#content.expanded {
+  margin-left: 0;
+}
+
+
+#sidebarToggle {
+position: fixed;
+top: 10px;
+left: 260px;
+z-index: 1050;
+transition: left 0.3s ease;
+}
+
+/* Importante: usar ~ para hermanos posteriores */
+#sidebar.collapsed ~ #sidebarToggle {
+left: 10px;
+}
+
+@media (max-width: 768px) {
+#sidebar {
+    position: fixed;
+    z-index: 1040;
+}
+#content {
+    margin-left: 0;
+}
+#sidebarToggle {
+    left: 10px;
+}
+}
+
+#clienteSuggestions {
+  position: absolute;
+  z-index: 1050; /* para que quede arriba */
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  width: 100%;
+  top: 100%; /* justo debajo del input */
+  left: 0;
+}
+.position-relative {
+  position: relative;
+}

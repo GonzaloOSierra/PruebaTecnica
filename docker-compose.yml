@@ -1,0 +1,54 @@
+version: "3.9"
+
+services:
+  app:
+    build: ./dockekrfile_scrap
+    container_name: ${NAME}_app
+    volumes:
+      - ./scraper:/usr/src/app
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+    networks:
+      - scraping_red
+    restart: unless-stopped
+    tty: true
+
+  scraping_web:
+    build: ./dockerfile_web
+    container_name: ${NAME}_web
+    env_file:
+      - .env
+    ports:
+      - "${WEB_PORT}:80"
+    volumes:
+      - ./www:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - scraping_red
+    restart: unless-stopped
+
+  db:
+    image: mysql:5.7
+    container_name: ${NAME}_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "${DB_PORT}:3306"
+    networks:
+      - scraping_red
+
+volumes:
+  db_data:
+
+networks:
+  scraping_red:
