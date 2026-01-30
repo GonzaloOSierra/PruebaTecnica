@@ -40,7 +40,7 @@ async function run() {
   try {
     console.log('Abriendo navegador (sesión persistente)...');
 
-    // 🔥 SESIÓN PERSISTENTE
+    // Sesion persistente
     context = await chromium.launchPersistentContext('./ml-session', {
       headless: true,
       slowMo: 40,
@@ -58,7 +58,6 @@ async function run() {
       timeout: 90000
     });
 
-    // dejar que hidrate JS
     await page.waitForTimeout(6000);
 
     // aceptar cookies si aparece
@@ -69,7 +68,7 @@ async function run() {
       console.log('No apareció banner de cookies');
     }
 
-    // señales humanas mínimas
+    // Moverse como humano
     await page.mouse.move(300, 400);
     await page.waitForTimeout(900);
     await page.mouse.move(600, 500);
@@ -79,9 +78,7 @@ async function run() {
     await humanScroll(page, 40);
     await page.waitForTimeout(3000);
 
-    // =======================
-    // DEBUG REAL
-    // =======================
+    ///////// DEBUG REAL //////////////////
     const debug = await page.evaluate(() => ({
       polyCard: document.querySelectorAll('.poly-card').length,
       anchors: document.querySelectorAll('a').length,
@@ -91,9 +88,8 @@ async function run() {
 
     console.log('DEBUG DOM:', debug);
 
-    // =======================
-    // HTML + CHEERIO
-    // =======================
+    //////////// HTML + CHEERIO ////////////////
+
     const html = await page.content();
     const $ = cheerio.load(html);
 
@@ -153,7 +149,7 @@ async function run() {
     
     console.log('Script terminado correctamente');
   } catch (err) {
-    console.error('❌ Error general:', err);
+    console.error('Error general:', err);
   } finally {
     console.log('Cerrando recursos...');
 
