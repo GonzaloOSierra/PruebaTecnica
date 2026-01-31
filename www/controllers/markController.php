@@ -38,7 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'addMark') {
     $name = $_POST['mark_name'] ?? null;// EDITAR PERFIL VETERINARIO
 
-    error_log($name);
     $scrapModel = new ScrapModel();
 
     $resultado = $scrapModel->addMark($name);
@@ -57,6 +56,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         exit;
     }
 }
+
+// Colocar Marcas
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'colocarMarks') {
+
+    error_log("entro a colocar marcas");
+
+    $scrapModel = new ScrapModel();
+    $marcas = $scrapModel->obtenerMarks();
+
+    $totalAfectados = 0;
+    $detalle = [];
+
+    foreach ($marcas as $marca) {
+        $id   = $marca->getId_Mark();
+        $mark = $marca->getM_Name();
+
+        $afectados = $scrapModel->colocarMarcas($id, $mark);
+
+        $totalAfectados += $afectados;
+
+        $detalle[] = [
+            'marca' => $mark,
+            'actualizados' => $afectados
+        ];
+    }
+
+    echo json_encode([
+        'status' => 'success',
+        'total_actualizados' => $totalAfectados,
+        'detalle' => $detalle
+    ]);
+    exit;
+}
+
+
 
 // Si no entra en ninguna condición válida
 echo json_encode(['status' => 'error', 'message' => 'Acceso no permitido.']);
