@@ -1,10 +1,10 @@
 <nav id="sidebar" aria-label="Sidebar navigation">
   <h4>Menú</h4>
   <ul class="nav flex-column">
-        <li><a href="../../index.php" class="nav-link">Inicio</a></li>
-        <li><a href="../views/marks/marks_Crud.php" class="nav-link">Añadir Marcas</a></li>
-        <li><a href="../../../views/admin/users/users_Crud.php" class="nav-link">Listado de Usuarios</a></li>
-        <li><a href="../../../views/admin/clinics/clinic_Crud.php" class="nav-link">Listado de Veterinarias</a></li>
+    <li><a href="/index.php" class="nav-link">Inicio</a></li>
+    <li><a href="/views/marks/marks_Crud.php" class="nav-link">Añadir Marcas</a></li>
+    <li><a href="/views/products/products_Asign_Mark.php" class="nav-link">Asignacion de Marcas</a></li>
+    <li><a href="/views/dashboard/dashboard.php" class="nav-link">Estadisticas</a></li>
   </ul>
 
 </nav>

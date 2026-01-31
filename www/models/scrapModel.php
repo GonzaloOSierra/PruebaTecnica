@@ -63,6 +63,89 @@ class ScrapModel extends Model {
         }
     }
 
+    ////////////// DASHBOARD /////////////////
+
+    public function obtPorcTotal() {
+        $items = [];
+        try {
+            $query = $this->query("
+                SELECT 
+                    CASE 
+                        WHEN p.marca_id IS NULL OR p.marca_id = 0 
+                            THEN 'Sin marca'
+                        ELSE m.nombre
+                    END AS marca,
+                    COUNT(*) AS cantidad,
+                    ROUND(
+                        COUNT(*) * 100 / (SELECT COUNT(*) FROM productos),
+                        2
+                    ) AS porcentaje
+                FROM productos p
+                LEFT JOIN marcas m ON m.id = p.marca_id
+                GROUP BY marca
+                ORDER BY porcentaje DESC;
+
+            ");
+
+            return $query->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log('SCRAPMODEL::obtPorcTotal -> ' . $e->getMessage());
+            return [];
+        }
+    }
+
+
+
+    ////////////// TITULOS /////////////////
+
+    public function obtTitles() {
+        $items = [];
+        try {
+            $query = $this->query('
+                SELECT 
+                    p.id as id,
+                    p.titulo,
+                    m.nombre AS m_name
+                FROM productos p
+                LEFT JOIN marcas m ON m.id = p.marca_id
+            ');
+
+            while ($o = $query->fetch(PDO::FETCH_ASSOC)) {
+                $item = new ScrapModel();
+                $item->from($o);
+                array_push($items, $item);
+            }
+
+            return $items;
+        } catch (PDOException $e) {
+            error_log('SCRAPMODEL::obtTitles -> ' . $e->getMessage());
+            return [];
+        }
+    }
+
+
+    public function colocarMarcas($id, $mark) {
+        try {
+            $sql = '
+                UPDATE productos
+                SET marca_id = :marca_id
+                WHERE (marca_id IS NULL OR marca_id = 0)
+                AND LOWER(titulo) LIKE :mark
+            ';
+
+            $stmt = $this->prepare($sql);
+            $stmt->bindValue(':marca_id', $id, PDO::PARAM_INT);
+            $stmt->bindValue(':mark', '%' . mb_strtolower($mark) . '%', PDO::PARAM_STR);
+            $stmt->execute();
+
+            return $stmt->rowCount();
+
+        } catch (PDOException $e) {
+            error_log('SCRAPMODEL::colocarMarcas -> ' . $e->getMessage());
+            return 0;
+        }
+    }
+
     ////////////// MARCAS /////////////////
 
     public function obtenerMarks() {
