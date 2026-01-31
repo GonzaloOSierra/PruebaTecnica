@@ -9,6 +9,7 @@ function cmp($a, $b) {
     return $a->getId() - $b->getId();
 }
 usort($regs, "cmp");
+
 ?>
 
 <!DOCTYPE html>
@@ -25,9 +26,9 @@ usort($regs, "cmp");
 
 <style>
     .url-cell {
-        max-width: 50000px;       /* ajustá a gusto */
-        word-break: break-all; /* corta URLs largas */
-        white-space: normal;   /* permite saltos de línea */
+        max-width: 50000px;
+        word-break: break-all;
+        white-space: normal;
     }
 
     .url-cell a {
@@ -43,7 +44,6 @@ usort($regs, "cmp");
 
     <h1 class="mb-4 text-center">Listado de Registros</h1>
 
-    <!-- Contenedor con Tabla -->
     <div class="container p-4 bg-success-subtle rounded mt-5">
         <div class="table-responsive">
             <table id="tablaRegs" class="table table-striped table-bordered">
@@ -67,7 +67,7 @@ usort($regs, "cmp");
                             <td><?= htmlspecialchars(trim($reg->getCreate_At() ?? '')); ?></td>
                             <td><?= htmlspecialchars(trim($reg->getActual_Price() ?? '')); ?></td>
                             <td><?= htmlspecialchars(trim($reg->getLast_Price() ?? '')); ?></td>
-                            <td><?= htmlspecialchars(trim(string: $reg->getRegistered_At() ?? '')); ?></td>
+                            <td><?= htmlspecialchars(trim( $reg->getRegistered_At() ?? '')); ?></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>

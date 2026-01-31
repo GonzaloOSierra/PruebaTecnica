@@ -41,7 +41,7 @@ class ScrapModel extends Model {
                         pr.precio_actual,
                         pr.precio_anterior,
                         pr.registrado_en,
-                        p.titulo,
+                        p.titulo AS titulo,
                         p.link,
                         p.imagen,
                         p.creado_en
@@ -63,6 +63,8 @@ class ScrapModel extends Model {
         }
     }
 
+    ////////////// MARCAS /////////////////
+
     public function obtenerMarks() {
         $items = [];
         try {
@@ -70,7 +72,7 @@ class ScrapModel extends Model {
                 SELECT 
                     m.id as id_mark,
                     m.nombre as m_name
-                FROM Marcas m
+                FROM marcas m
             ');
 
             while ($o = $query->fetch(PDO::FETCH_ASSOC)) {
@@ -86,6 +88,50 @@ class ScrapModel extends Model {
         }
     }
 
+    public function addMark($name) {
+        try {
+            $sql = 'INSERT INTO marcas (nombre) VALUES (:nombre)';
+            $stmt = $this->prepare($sql);
+            $stmt->bindValue(':nombre', trim($name), PDO::PARAM_STR);
+
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log('SCRAPMODEL::addMark -> ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function getMark($id) {
+        try {
+            $sql = 'SELECT id AS id_mark, nombre AS m_name 
+                    FROM marcas 
+                    WHERE id = :id';
+
+            $stmt = $this->prepare($sql);
+            $stmt->bindValue(':id', trim($id), PDO::PARAM_INT);
+            $stmt->execute();
+
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            error_log('SCRAPMODEL::getMark -> ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function actMark($id, $name) {
+        try {
+            $sql = 'UPDATE marcas SET nombre = :nombre WHERE id = :id';
+            $stmt = $this->prepare($sql);
+            $stmt->bindValue(':nombre', trim($name), PDO::PARAM_STR);
+            $stmt->bindValue(':id', trim($id), PDO::PARAM_INT);
+
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log('SCRAPMODEL::addMark -> ' . $e->getMessage());
+            return false;
+        }
+    }
 
 
     public function from($array) {
@@ -99,8 +145,8 @@ class ScrapModel extends Model {
         $this->precio_actual = $array['precio_actual'] ?? '';
         $this->precio_anterior = $array['precio_anterior'] ?? '';
         $this->registrado_en = $array['registrado_en'] ?? null;
-        $this->id = $array['id_mark'] ?? null;
-        $this->titulo = $array['m_name'] ?? '';
+        $this->id_mark = $array['id_mark'] ?? null;
+        $this->m_name = $array['m_name'] ?? '';
     }
 
 
