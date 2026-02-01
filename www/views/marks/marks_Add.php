@@ -1,11 +1,10 @@
 
-<!-- Modal Registrar Usuario -->
 <div class="modal fade" id="registrarMarkModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 
       <div class="modal-header">
-        <h5 class="modal-title">Registrar Nuevo Usuario</h5>
+        <h5 class="modal-title">Registrar Nueva Marca</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
