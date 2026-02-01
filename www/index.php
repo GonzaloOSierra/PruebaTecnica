@@ -26,7 +26,7 @@ usort($regs, "cmp");
 
 <style>
     .url-cell {
-        max-width: 50000px;
+        max-width: 5000px;
         word-break: break-all;
         white-space: normal;
     }

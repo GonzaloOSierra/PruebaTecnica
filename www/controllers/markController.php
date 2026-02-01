@@ -45,13 +45,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     if ($resultado) {
         echo json_encode([
             'status' => 'success',
-            'message' => 'Usuario editado exitosamente'
+            'message' => 'Marca agregada exitosamente'
         ]);
         exit;
     } else {
         echo json_encode([
             'success' => 'error',
-            'message' => 'Error en editar el Usuario'
+            'message' => 'Error en agregar Marca'
         ]);
         exit;
     }

@@ -94,6 +94,103 @@ class ScrapModel extends Model {
         }
     }
 
+    public function productosPorRango($desde, $hasta) {
+        try {
+            $sql = '
+                SELECT
+                    p.id,
+                    p.titulo,
+                    COUNT(DISTINCT DATE(pr.registrado_en)) AS dias_aparecido
+                FROM producto_registros pr
+                INNER JOIN productos p ON p.id = pr.producto_id
+                WHERE DATE(pr.registrado_en) BETWEEN :desde AND :hasta
+                GROUP BY p.id, p.titulo
+                ORDER BY dias_aparecido DESC
+            ';
+
+            $stmt = $this->prepare($sql);
+            $stmt->bindValue(':desde', $desde);
+            $stmt->bindValue(':hasta', $hasta);
+            $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            error_log('SCRAPMODEL::productosPorRango -> ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function newPM($mes, $anio) {
+        try {
+            $inicio = "$anio-$mes-01";
+            $fin = date('Y-m-t', strtotime($inicio));
+
+            $sql = "
+                SELECT
+                    SUM(CASE 
+                        WHEN primera_aparicion BETWEEN :inicio1 AND :fin 
+                        THEN 1 ELSE 0 
+                    END) AS nuevos,
+
+                    SUM(CASE 
+                        WHEN primera_aparicion < :inicio2 
+                        THEN 1 ELSE 0 
+                    END) AS repetidos
+                FROM (
+                    SELECT 
+                        producto_id, 
+                        DATE(MIN(registrado_en)) AS primera_aparicion
+                    FROM producto_registros
+                    GROUP BY producto_id
+                ) t
+            ";
+
+            $stmt = $this->prepare($sql);
+            $stmt->bindValue(':inicio1', $inicio);
+            $stmt->bindValue(':inicio2', $inicio);
+            $stmt->bindValue(':fin', $fin);
+            $stmt->execute();
+
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            error_log('SCRAPMODEL::newPM -> ' . $e->getMessage());
+            return ['nuevos' => 0, 'repetidos' => 0];
+        }
+    }
+
+
+
+    public function prodNewMes($mes, $anio) {
+        try {
+            $inicio = "$anio-$mes-01";
+            $fin = date('Y-m-t', strtotime($inicio));
+
+            $sql = "
+                SELECT
+                    p.id,
+                    p.titulo,
+                    MIN(DATE(pr.registrado_en)) AS primera_aparicion
+                FROM producto_registros pr
+                JOIN productos p ON p.id = pr.producto_id
+                GROUP BY p.id, p.titulo
+                HAVING primera_aparicion BETWEEN :inicio AND :fin
+                ORDER BY primera_aparicion DESC
+            ";
+
+            $stmt = $this->prepare($sql);
+            $stmt->bindValue(':inicio', $inicio);
+            $stmt->bindValue(':fin', $fin);
+            $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            error_log('SCRAPMODEL::prodNewMes -> ' . $e->getMessage());
+            return [];
+        }
+    }
 
 
     ////////////// TITULOS /////////////////
@@ -145,6 +242,32 @@ class ScrapModel extends Model {
             return 0;
         }
     }
+
+    public function topDiez() {
+        try {
+            $sql = "
+                SELECT
+                    p.id,
+                    p.titulo,
+                    COUNT(DISTINCT DATE(pr.registrado_en)) AS dias_aparecido
+                FROM producto_registros pr
+                JOIN productos p ON p.id = pr.producto_id
+                GROUP BY p.id, p.titulo
+                ORDER BY dias_aparecido DESC
+                LIMIT 10;
+            ";
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            error_log('SCRAPMODEL::top10ProductosMasSolicitados -> ' . $e->getMessage());
+            return [];
+        }
+    }
+
 
     ////////////// MARCAS /////////////////
 

@@ -36,10 +36,9 @@ usort($titles, "cmp");
             <table id="tablaTitles" class="table table-striped table-bordered">
                 <thead class="table-success text-center">
                     <button id="btnColocarMark" onclick="colocarMarks()" class="btn btn-primary mb-3">
-                        Registrar Marca
+                        Asignar Marca
                     </button>
                     <tr>
-                        <th>ID</th>
                         <th>Nombre</th>
                         <th>Marca</th>
                     </tr>
@@ -47,7 +46,6 @@ usort($titles, "cmp");
                 <tbody class="text-center">
                     <?php foreach ($titles as $title): ?>
                         <tr id="titleRow<?= $title->getId(); ?>">
-                                <td><?= htmlspecialchars($title->getId() ?? ''); ?></td>
                                 <td><?= htmlspecialchars($title->getTitle() ?? ''); ?></td>
                                 <td><?= htmlspecialchars(!empty($title->getM_Name()) ? $title->getM_Name() : 'No Colocada'); ?></td>
                         </tr>
