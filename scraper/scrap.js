@@ -1,12 +1,16 @@
 let context;
 
+const ahoraARG = new Date().toLocaleString('es-AR', {
+  timeZone: 'America/Argentina/Buenos_Aires'
+});
+
 const mysql = require('mysql2/promise');
 
 const db = mysql.createPool({
-  host: process.env.DB_HOST || 'db',
-  user: process.env.DB_USER || 'scraper',
-  password: process.env.DB_PASSWORD || 'scraperpass',
-  database: process.env.DB_NAME || 'scraping',
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10
 });
@@ -39,6 +43,7 @@ async function humanScroll(page, maxScrolls = 35) {
 async function run() {
   try {
     console.log('Abriendo navegador (sesión persistente)...');
+    console.log('Hora scrapeo:', ahoraARG);
 
     // Sesion persistente
     context = await chromium.launchPersistentContext('./ml-session', {
@@ -93,6 +98,8 @@ async function run() {
     const html = await page.content();
     const $ = cheerio.load(html);
 
+    /////////// INSERCION DE PRODUCTOS OFERTAS ///////////////
+
     const productos = [];
 
     $('.poly-card').each((_, el) => {
@@ -144,8 +151,6 @@ async function run() {
         console.error('Error guardando producto:', producto.titulo, err.message);
       }
     }
-
-    console.log('Productos guardados correctamente');
     
     console.log('Script terminado correctamente');
   } catch (err) {
@@ -166,6 +171,8 @@ function parsePrecio(valor) {
   return Number(valor.replace(/\./g, '').replace(',', '.'));
 }
 
+//////// PRODUCTOS /////////////
+
 async function guardarProducto(producto) {
   const {
     titulo,
@@ -175,13 +182,13 @@ async function guardarProducto(producto) {
     imagen
   } = producto;
 
-  // 1️⃣ buscar producto
+  // buscar producto
   const [rows] = await db.query(
     'SELECT id FROM productos WHERE titulo = ?',
     [titulo]
   );
 
-  let productoId;
+  let id_producto;
 
   if (rows.length === 0) {
     const [result] = await db.query(
@@ -189,18 +196,18 @@ async function guardarProducto(producto) {
       VALUES (?, ?, ?, NULL)`,
       [titulo, link, imagen]
     );
-    productoId = result.insertId;
+    id_producto = result.insertId;
   } else {
-    productoId = rows[0].id;
+    id_producto = rows[0].id;
   }
 
-  // 3️⃣ insertar registro
+  // insertar registro
   await db.query(
     `INSERT INTO producto_registros
     (producto_id, precio_actual, precio_anterior)
     VALUES (?, ?, ?)`,
     [
-      productoId,
+      id_producto,
       parsePrecio(precioActual),
       parsePrecio(precioAnterior)
     ]
@@ -208,5 +215,6 @@ async function guardarProducto(producto) {
 
 
 }
+
 
 run();

@@ -6,7 +6,17 @@
     <li><a href="/views/products/products_Asign_Mark.php" class="nav-link">Asignacion de Marcas</a></li>
     <li><a href="/views/dashboard/dashboard.php" class="nav-link">Estadisticas</a></li>
   </ul>
-
+  <li>
+    <a class="nav-link" data-bs-toggle="collapse" data-bs-target="#gestionMenu" aria-expanded="false" aria-controls="gestionMenu" href="#">
+        Otros ▼
+    </a>
+      <div class="collapse" id="gestionMenu">
+          <ul class="nav flex-column ms-3">
+            <li><a href="/views/dashboard/banners.php" class="nav-link">Banners</a></li>
+            <li><a href="/views/dashboard/subs.php" class="nav-link">Subscripciones</a></li>
+            </ul>
+      </div>
+  </li>
 </nav>
 
 <button id="sidebarToggle" class="btn btn-primary btn-sm" aria-label="Toggle sidebar">☰</button>
