@@ -63,6 +63,60 @@ class ScrapModel extends Model {
         }
     }
 
+    public function obtenerBanners() {
+        $items = [];
+        try {
+        $query = $this->query('
+                    SELECT 
+                        titulo,
+                        link,
+                        imagen,
+                        created_at as creado_en
+                    FROM banner
+                    WHERE tipo = "banner"
+                    ORDER BY created_at DESC
+            ');
+
+            while ($o = $query->fetch(PDO::FETCH_ASSOC)) {
+                $item = new ScrapModel();
+                $item->from($o); 
+                array_push($items, $item);
+            }
+
+            return $items;
+        } catch (PDOException $e) {
+            error_log('SCRAPMODEL::obtenerBanners -> ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public function obtenerSubs() {
+        $items = [];
+        try {
+        $query = $this->query('
+                    SELECT 
+                        titulo,
+                        link,
+                        imagen,
+                        created_at as creado_en
+                    FROM banner
+                    WHERE tipo = "subscripciones"
+                    ORDER BY created_at DESC
+            ');
+
+            while ($o = $query->fetch(PDO::FETCH_ASSOC)) {
+                $item = new ScrapModel();
+                $item->from($o); 
+                array_push($items, $item);
+            }
+
+            return $items;
+        } catch (PDOException $e) {
+            error_log('SCRAPMODEL::obtenerSubs -> ' . $e->getMessage());
+            return [];
+        }
+    }
+
     ////////////// DASHBOARD /////////////////
 
     public function obtPorcTotal() {
